@@ -1,22 +1,22 @@
 export type AdjacentEdge = {
-    startingNumber?: number;
-    currentNumber?: number;
-    enabled?: boolean;
-}
+  startingNumber?: number;
+  currentNumber?: number;
+  enabled?: boolean;
+};
 
 export type CellState = {
-    inputUp: boolean;
-    inputDown: boolean;
-    inputLeft: boolean;
-    inputRight: boolean;
+  inputUp: boolean;
+  inputDown: boolean;
+  inputLeft: boolean;
+  inputRight: boolean;
 
-    mirror?: 'positive' | 'negative';
+  mirror?: 'positive' | 'negative';
 
-    row: number;
-    col: number;
+  row: number;
+  col: number;
 
-    edgeTop?: AdjacentEdge;
-    edgeBottom?: AdjacentEdge;
-    edgeLeft?: AdjacentEdge;
-    edgeRight?: AdjacentEdge;
-}
+  edgeTop?: AdjacentEdge;
+  edgeBottom?: AdjacentEdge;
+  edgeLeft?: AdjacentEdge;
+  edgeRight?: AdjacentEdge;
+};

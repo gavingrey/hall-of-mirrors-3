@@ -20,23 +20,20 @@ export const Cell: React.FC<CellProps> = ({
     edgeTop,
     edgeBottom,
     edgeLeft,
-    edgeRight
+    edgeRight,
   } = cell;
 
-  const {
-    clickCell,
-    clickEdge,
-  } = useGridStore();
+  const { clickCell, clickEdge } = useGridStore();
 
   // SVG dimensions for the cell content - use 100% to fill the entire cell
-  const svgSize = "100%";
+  const svgSize = '100%';
   const mirrorThickness = 3;
   const laserThickness = 2;
 
   // Helper to calculate the laser path based on input direction and mirror
   const renderLaserPaths = () => {
     const paths = [];
-    
+
     // Handle input from the top
     if (inputUp) {
       if (!mirror) {
@@ -76,7 +73,7 @@ export const Cell: React.FC<CellProps> = ({
         );
       }
     }
-    
+
     // Handle input from the bottom
     if (inputDown) {
       if (!mirror) {
@@ -116,7 +113,7 @@ export const Cell: React.FC<CellProps> = ({
         );
       }
     }
-    
+
     // Handle input from the left
     if (inputLeft) {
       if (!mirror) {
@@ -156,7 +153,7 @@ export const Cell: React.FC<CellProps> = ({
         );
       }
     }
-    
+
     // Handle input from the right
     if (inputRight) {
       if (!mirror) {
@@ -196,7 +193,7 @@ export const Cell: React.FC<CellProps> = ({
         );
       }
     }
-    
+
     return paths;
   };
 
@@ -207,77 +204,64 @@ export const Cell: React.FC<CellProps> = ({
       onClick={() => clickCell(cell.row, cell.col)}
     >
       {/* SVG for the laser paths and mirrors */}
-      <svg
-        width={svgSize}
-        height={svgSize}
-        viewBox="0 0 100 100"
-        className="absolute top-0 left-0"
-      >
+      <svg width={svgSize} height={svgSize} viewBox="0 0 100 100" className="absolute top-0 left-0">
         {/* Mirror line */}
         {mirror === 'positive' && (
-          <line
-            x1="0"
-            y1="100%"
-            x2="100%"
-            y2="0"
-            stroke="red"
-            strokeWidth={mirrorThickness}
-          />
+          <line x1="0" y1="100%" x2="100%" y2="0" stroke="red" strokeWidth={mirrorThickness} />
         )}
         {mirror === 'negative' && (
-          <line
-            x1="0"
-            y1="0"
-            x2="100%"
-            y2="100%"
-            stroke="red"
-            strokeWidth={mirrorThickness}
-          />
+          <line x1="0" y1="0" x2="100%" y2="100%" stroke="red" strokeWidth={mirrorThickness} />
         )}
-        
+
         {/* Laser paths */}
         {renderLaserPaths()}
       </svg>
 
       {/* Dots outside the cell */}
       {edgeTop && (
-        <div className={`-top-4 absolute w-2 h-2 ${edgeTop.enabled ? 'bg-green-400' : 'bg-black'} rounded-full left-1/2 -translate-x-1/2 `}
-        onClick={(e) => {
-          e.stopPropagation();
-          clickEdge(cell.row, cell.col, 'top');
-        }} />
+        <div
+          className={`-top-4 absolute w-2 h-2 ${edgeTop.enabled ? 'bg-green-400' : 'bg-black'} rounded-full left-1/2 -translate-x-1/2 `}
+          onClick={e => {
+            e.stopPropagation();
+            clickEdge(cell.row, cell.col, 'top');
+          }}
+        />
       )}
 
       {edgeBottom && (
-        <div className={`-bottom-4 absolute w-2 h-2 ${edgeBottom.enabled ? 'bg-green-400' : 'bg-black'} rounded-full left-1/2 -translate-x-1/2 `}
-        onClick={(e) => {
-          e.stopPropagation();
-          clickEdge(cell.row, cell.col, 'bottom');
-        }} />
+        <div
+          className={`-bottom-4 absolute w-2 h-2 ${edgeBottom.enabled ? 'bg-green-400' : 'bg-black'} rounded-full left-1/2 -translate-x-1/2 `}
+          onClick={e => {
+            e.stopPropagation();
+            clickEdge(cell.row, cell.col, 'bottom');
+          }}
+        />
       )}
 
       {edgeLeft && (
-        <div className={`-left-4 absolute w-2 h-2 ${edgeLeft.enabled ? 'bg-green-400' : 'bg-black'} rounded-full top-1/2 -translate-y-1/2`}
-        onClick={(e) => {
-          e.stopPropagation();
-          clickEdge(cell.row, cell.col, 'left');
-        }} />
+        <div
+          className={`-left-4 absolute w-2 h-2 ${edgeLeft.enabled ? 'bg-green-400' : 'bg-black'} rounded-full top-1/2 -translate-y-1/2`}
+          onClick={e => {
+            e.stopPropagation();
+            clickEdge(cell.row, cell.col, 'left');
+          }}
+        />
       )}
 
       {edgeRight && (
-        <div className={`-right-4 absolute w-2 h-2 ${edgeRight.enabled ? 'bg-green-400' : 'bg-black'} rounded-full top-1/2 -translate-y-1/2 `}
-        onClick={(e) => {
-          e.stopPropagation();
-          clickEdge(cell.row, cell.col, 'right');
-        }} />
+        <div
+          className={`-right-4 absolute w-2 h-2 ${edgeRight.enabled ? 'bg-green-400' : 'bg-black'} rounded-full top-1/2 -translate-y-1/2 `}
+          onClick={e => {
+            e.stopPropagation();
+            clickEdge(cell.row, cell.col, 'right');
+          }}
+        />
       )}
 
       {/* Numbers outside the cell */}
       {/* Top edge number */}
       {(edgeTop?.startingNumber || edgeTop?.currentNumber) && (
-        <div
-          className={`absolute pointer-events-none -top-10 left-1/2 -translate-x-1/2 text-sm`}
-        >
+        <div className={`absolute pointer-events-none -top-10 left-1/2 -translate-x-1/2 text-sm`}>
           {(() => {
             // Case 1: Starting number only (black)
             if (edgeTop.startingNumber && !edgeTop.currentNumber) {
@@ -288,11 +272,19 @@ export const Cell: React.FC<CellProps> = ({
               return <p className="text-blue-500">{edgeTop.currentNumber}</p>;
             }
             // Case 3: Both numbers match (green)
-            else if (edgeTop.startingNumber && edgeTop.currentNumber && edgeTop.startingNumber === edgeTop.currentNumber) {
+            else if (
+              edgeTop.startingNumber &&
+              edgeTop.currentNumber &&
+              edgeTop.startingNumber === edgeTop.currentNumber
+            ) {
               return <p className="text-green-500">{edgeTop.currentNumber}</p>;
             }
             // Case 4: Both numbers don't match (red with strikethrough)
-            else if (edgeTop.startingNumber && edgeTop.currentNumber && edgeTop.startingNumber !== edgeTop.currentNumber) {
+            else if (
+              edgeTop.startingNumber &&
+              edgeTop.currentNumber &&
+              edgeTop.startingNumber !== edgeTop.currentNumber
+            ) {
               return <p className="text-red-500 line-through">{edgeTop.currentNumber}</p>;
             }
             return null;
@@ -315,11 +307,19 @@ export const Cell: React.FC<CellProps> = ({
               return <p className="text-blue-500">{edgeBottom.currentNumber}</p>;
             }
             // Case 3: Both numbers match (green)
-            else if (edgeBottom.startingNumber && edgeBottom.currentNumber && edgeBottom.startingNumber === edgeBottom.currentNumber) {
+            else if (
+              edgeBottom.startingNumber &&
+              edgeBottom.currentNumber &&
+              edgeBottom.startingNumber === edgeBottom.currentNumber
+            ) {
               return <p className="text-green-500">{edgeBottom.currentNumber}</p>;
             }
             // Case 4: Both numbers don't match (red with strikethrough)
-            else if (edgeBottom.startingNumber && edgeBottom.currentNumber && edgeBottom.startingNumber !== edgeBottom.currentNumber) {
+            else if (
+              edgeBottom.startingNumber &&
+              edgeBottom.currentNumber &&
+              edgeBottom.startingNumber !== edgeBottom.currentNumber
+            ) {
               return <p className="text-red-500 line-through">{edgeBottom.currentNumber}</p>;
             }
             return null;
@@ -342,11 +342,19 @@ export const Cell: React.FC<CellProps> = ({
               return <p className="text-blue-500">{edgeLeft.currentNumber}</p>;
             }
             // Case 3: Both numbers match (green)
-            else if (edgeLeft.startingNumber && edgeLeft.currentNumber && edgeLeft.startingNumber === edgeLeft.currentNumber) {
+            else if (
+              edgeLeft.startingNumber &&
+              edgeLeft.currentNumber &&
+              edgeLeft.startingNumber === edgeLeft.currentNumber
+            ) {
               return <p className="text-green-500">{edgeLeft.currentNumber}</p>;
             }
             // Case 4: Both numbers don't match (red with strikethrough)
-            else if (edgeLeft.startingNumber && edgeLeft.currentNumber && edgeLeft.startingNumber !== edgeLeft.currentNumber) {
+            else if (
+              edgeLeft.startingNumber &&
+              edgeLeft.currentNumber &&
+              edgeLeft.startingNumber !== edgeLeft.currentNumber
+            ) {
               return <p className="text-red-500 line-through">{edgeLeft.currentNumber}</p>;
             }
             return null;
@@ -369,11 +377,19 @@ export const Cell: React.FC<CellProps> = ({
               return <p className="text-blue-500">{edgeRight.currentNumber}</p>;
             }
             // Case 3: Both numbers match (green)
-            else if (edgeRight.startingNumber && edgeRight.currentNumber && edgeRight.startingNumber === edgeRight.currentNumber) {
+            else if (
+              edgeRight.startingNumber &&
+              edgeRight.currentNumber &&
+              edgeRight.startingNumber === edgeRight.currentNumber
+            ) {
               return <p className="text-green-500">{edgeRight.currentNumber}</p>;
             }
             // Case 4: Both numbers don't match (red with strikethrough)
-            else if (edgeRight.startingNumber && edgeRight.currentNumber && edgeRight.startingNumber !== edgeRight.currentNumber) {
+            else if (
+              edgeRight.startingNumber &&
+              edgeRight.currentNumber &&
+              edgeRight.startingNumber !== edgeRight.currentNumber
+            ) {
               return <p className="text-red-500 line-through">{edgeRight.currentNumber}</p>;
             }
             return null;
