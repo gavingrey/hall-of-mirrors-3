@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import Grid from './Grid';
 import { useGridStore } from './state/gridStore';
 
