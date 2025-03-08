@@ -1,6 +1,7 @@
 export type AdjacentEdge = {
     startingNumber?: number;
     currentNumber?: number;
+    enabled?: boolean;
 }
 
 export type CellState = {

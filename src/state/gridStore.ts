@@ -40,6 +40,244 @@ function initializeGrid(): CellState[][] {
     return grid;
 }
 
+function calcProduct(existingSums: number[]): number {
+    // Multiply all the numbers in existingSums
+    return existingSums.reduce((acc, curr) => acc * curr, 1);
+}
+
+function tracePath(
+    grid: CellState[][],
+    row: number, 
+    col: number, 
+    from: 'top' | 'bottom' | 'left' | 'right',
+    existingSums: number[],
+    runningSum: number): number {
+        switch (from) {
+            case 'top':
+                grid[row][col].inputUp = true;
+                if (grid[row][col].mirror) {
+                    runningSum += 0.5;
+                    existingSums.push(runningSum);
+                    runningSum = 0.5;
+                    if (grid[row][col].mirror === 'positive') {
+                        if (col === 0) {
+                            // On an edge.
+                            runningSum += 0.5;
+                            existingSums.push(runningSum);
+                            const product = calcProduct(existingSums);
+                            grid[row][col].edgeLeft!.currentNumber = product;
+                            return product;
+                        } else {
+                            return tracePath(grid, row, col - 1, 'right', existingSums, runningSum);
+                        }
+                    } else {
+                        if (col === 9) {
+                            // On an edge.
+                            runningSum += 0.5;
+                            existingSums.push(runningSum);
+                            const product = calcProduct(existingSums);
+                            grid[row][col].edgeRight!.currentNumber = product;
+                            return product;
+                        } else {
+                            return tracePath(grid, row, col + 1, 'left', existingSums, runningSum);
+                        }
+                    }
+                } else {
+                    runningSum += 1;
+                    if (row === 9) {
+                        // Reached the bottom.
+                        runningSum += 0.5;
+                        existingSums.push(runningSum);
+                        const product = calcProduct(existingSums);
+                        grid[row][col].edgeBottom!.currentNumber = product;
+                        return product;
+                    } else {
+                        return tracePath(grid, row + 1, col, 'top', existingSums, runningSum);
+                    }
+                }
+                break;
+            case 'bottom':
+                grid[row][col].inputDown = true;
+                if (grid[row][col].mirror) {
+                    runningSum += 0.5;
+                    existingSums.push(runningSum);
+                    runningSum = 0.5;
+                    if (grid[row][col].mirror === 'positive') {
+                        if (col === 9) {
+                            // On an edge.
+                            runningSum += 0.5;
+                            existingSums.push(runningSum);
+                            const product = calcProduct(existingSums);
+                            grid[row][col].edgeRight!.currentNumber = product;
+                            return product;
+                        } else {
+                            return tracePath(grid, row, col + 1, 'left', existingSums, runningSum);
+                        }
+                    }
+                    else {
+                        if (col === 0) {
+                            // On an edge.
+                            runningSum += 0.5;
+                            existingSums.push(runningSum);
+                            const product = calcProduct(existingSums);
+                            grid[row][col].edgeLeft!.currentNumber = product;
+                            return product;
+                        } else {
+                            return tracePath(grid, row, col - 1, 'right', existingSums, runningSum);
+                        }
+                    }
+                } else {
+                    runningSum += 1;
+                    if (row === 0) {
+                        // Reached the top.
+                        runningSum += 0.5;
+                        existingSums.push(runningSum);
+                        const product = calcProduct(existingSums);
+                        grid[row][col].edgeTop!.currentNumber = product;
+                        return product;
+                    } else {
+                        return tracePath(grid, row - 1, col, 'bottom', existingSums, runningSum);
+                    }
+                }
+                break;
+            case 'left':
+                grid[row][col].inputLeft = true;
+                if (grid[row][col].mirror) {
+                    runningSum += 0.5;
+                    existingSums.push(runningSum);
+                    runningSum = 0.5;
+                    if (grid[row][col].mirror === 'positive') {
+                        if (row === 0) {
+                            // On the top edge.
+                            runningSum += 0.5;
+                            existingSums.push(runningSum);
+                            const product = calcProduct(existingSums);
+                            grid[row][col].edgeTop!.currentNumber = product;
+                            return product;
+                        } else {
+                            return tracePath(grid, row - 1, col, 'bottom', existingSums, runningSum);
+                        }
+                    } else {
+                        if (row === 9) {
+                            // On the bottom edge.
+                            runningSum += 0.5;
+                            existingSums.push(runningSum);
+                            const product = calcProduct(existingSums);
+                            grid[row][col].edgeBottom!.currentNumber = product;
+                            return product;
+                        } else {
+                            return tracePath(grid, row + 1, col, 'top', existingSums, runningSum);
+                        }
+                    }
+                } else {
+                    runningSum += 1;
+                    if (col === 9) {
+                        // Reached the right edge.
+                        runningSum += 0.5;
+                        existingSums.push(runningSum);
+                        const product = calcProduct(existingSums);
+                        grid[row][col].edgeRight!.currentNumber = product;
+                        return product;
+                    } else {
+                        return tracePath(grid, row, col + 1, 'left', existingSums, runningSum);
+                    }
+                }
+                break;
+            case 'right':
+                grid[row][col].inputRight = true;
+                if (grid[row][col].mirror) {
+                    runningSum += 0.5;
+                    existingSums.push(runningSum);
+                    runningSum = 0.5;
+                    if (grid[row][col].mirror === 'positive') {
+                        if (row === 9) {
+                            // On the bottom edge.
+                            runningSum += 0.5;
+                            existingSums.push(runningSum);
+                            const product = calcProduct(existingSums);
+                            grid[row][col].edgeBottom!.currentNumber = product;
+                            return product;
+                        } else {
+                            return tracePath(grid, row + 1, col, 'top', existingSums, runningSum);
+                        }
+                    } else {
+                        if (row === 0) {
+                            // On the top edge.
+                            runningSum += 0.5;
+                            existingSums.push(runningSum);
+                            const product = calcProduct(existingSums);
+                            grid[row][col].edgeTop!.currentNumber = product;
+                            return product;
+                        } else {
+                            return tracePath(grid, row - 1, col, 'bottom', existingSums, runningSum);
+                        }
+                    }
+                } else {
+                    runningSum += 1;
+                    if (col === 0) {
+                        // Reached the left edge.
+                        runningSum += 0.5;
+                        existingSums.push(runningSum);
+                        const product = calcProduct(existingSums);
+                        grid[row][col].edgeLeft!.currentNumber = product;
+                        return product;
+                    } else {
+                        return tracePath(grid, row, col - 1, 'right', existingSums, runningSum);
+                    }
+                }
+        }
+}
+
+function retracePaths(newState: GridState): void {
+    for (const cellRow of newState.grid) {
+        for (const cell of cellRow) {
+            cell.inputUp = false;
+            cell.inputDown = false;
+            cell.inputLeft = false;
+            cell.inputRight = false;
+
+            cell.edgeTop ? cell.edgeTop.currentNumber = undefined : undefined;
+            cell.edgeBottom ? cell.edgeBottom.currentNumber = undefined : undefined;
+            cell.edgeLeft ? cell.edgeLeft.currentNumber = undefined : undefined;
+            cell.edgeRight ? cell.edgeRight.currentNumber = undefined : undefined;
+        }
+    }
+    for (const cellRow of newState.grid) {
+        for (const cell of cellRow) {
+            if (cell.edgeTop && cell.edgeTop.enabled) {
+                cell.edgeTop.currentNumber = tracePath(newState.grid, cell.row, cell.col, 'top', [], 0.5);
+            }
+            if (cell.edgeBottom && cell.edgeBottom.enabled) {
+                cell.edgeBottom.currentNumber = tracePath(newState.grid, cell.row, cell.col, 'bottom', [], 0.5);
+            }
+            if (cell.edgeLeft && cell.edgeLeft.enabled) {
+                cell.edgeLeft.currentNumber = tracePath(newState.grid, cell.row, cell.col, 'left', [], 0.5);
+            }
+            if (cell.edgeRight && cell.edgeRight.enabled) {
+                cell.edgeRight.currentNumber = tracePath(newState.grid, cell.row, cell.col, 'right', [], 0.5);
+            }
+        }
+    }
+    // Log all current numbers
+    for (const cellRow of newState.grid) {
+        for (const cell of cellRow) {
+            if (cell.edgeTop && cell.edgeTop.currentNumber) {
+                console.log(`Cell (${cell.row}, ${cell.col}) top: ${cell.edgeTop.currentNumber}`);
+            }
+            if (cell.edgeBottom && cell.edgeBottom.currentNumber) { 
+                console.log(`Cell (${cell.row}, ${cell.col}) bottom: ${cell.edgeBottom.currentNumber}`);
+            }
+            if (cell.edgeLeft && cell.edgeLeft.currentNumber) {
+                console.log(`Cell (${cell.row}, ${cell.col}) left: ${cell.edgeLeft.currentNumber}`);
+            }
+            if (cell.edgeRight && cell.edgeRight.currentNumber) {
+                console.log(`Cell (${cell.row}, ${cell.col}) right: ${cell.edgeRight.currentNumber}`);
+
+            }
+        }
+    }
+}
+
 type GridState = {
     grid: CellState[][];
 
@@ -52,13 +290,23 @@ export const useGridStore = create<GridState>((set) => ({
 
     clickCell: (row, col) => {
         set((state) => {
+            // Mirrors cannot be placed in orthoganally adjacent cells.
+            if (row > 0 && state.grid[row - 1][col].mirror) {
+                return state;
+            }
+            if (row < 9 && state.grid[row + 1][col].mirror) {
+                return state;
+            }
+            if (col > 0 && state.grid[row][col - 1].mirror) {
+                return state;
+            }
+            if (col < 9 && state.grid[row][col + 1].mirror) {
+                return state;
+            }
             const newState = { ...state };
-            const cell = state.grid[row][col];
-            cell.inputUp = !cell.inputUp;
-            cell.inputDown = !cell.inputDown;
-            cell.inputLeft = !cell.inputLeft;
-            cell.inputRight = !cell.inputRight;
-            newState.grid[row][col] = cell;
+            const existingMirror = newState.grid[row][col].mirror;
+            newState.grid[row][col].mirror = !existingMirror ? 'positive' : existingMirror === 'positive' ? 'negative' : undefined;
+            retracePaths(newState);
             return newState;
         });
     },
@@ -66,13 +314,12 @@ export const useGridStore = create<GridState>((set) => ({
     clickEdge: (row, col, edge) => {
         set((state) => {
             const newState = { ...state };
-            const cell = state.grid[row][col];
-            const edgeKey = `edge${edge.charAt(0).toUpperCase() + edge.slice(1)}` as 'edgeTop' | 'edgeBottom' | 'edgeLeft' | 'edgeRight';
-            const edgeData = cell[edgeKey];
-            if (edgeData) {
-                edgeData.currentNumber = edgeData.currentNumber ? undefined : edgeData.startingNumber;
-                newState.grid[row][col][edgeKey] = edgeData;
-            }
+            const edgeState = edge === 'top' ? newState.grid[row][col].edgeTop! : edge === 'bottom' ? newState.grid[row][col].edgeBottom! : edge === 'left' ? newState.grid[row][col].edgeLeft! : newState.grid[row][col].edgeRight!;
+            
+            // Explicitly set to true if undefined or false, and to false if true
+            edgeState.enabled = edgeState.enabled !== true;
+            
+            retracePaths(newState);
             return newState;
         });
     }

@@ -57,7 +57,7 @@ export const Cell: React.FC<CellProps> = ({
         paths.push(
           <polyline
             key="up-positive"
-            points="50%,0 50%,50% 0,50%"
+            points="50 0 50 50 0 50"
             stroke="red"
             strokeWidth={laserThickness}
             fill="none"
@@ -68,7 +68,7 @@ export const Cell: React.FC<CellProps> = ({
         paths.push(
           <polyline
             key="up-negative"
-            points="50%,0 50%,50% 100%,50%"
+            points="50 0 50 50 100 50"
             stroke="red"
             strokeWidth={laserThickness}
             fill="none"
@@ -97,7 +97,7 @@ export const Cell: React.FC<CellProps> = ({
         paths.push(
           <polyline
             key="down-positive"
-            points="50%,100% 50%,50% 100%,50%"
+            points="50 100 50 50 100 50"
             stroke="red"
             strokeWidth={laserThickness}
             fill="none"
@@ -108,7 +108,7 @@ export const Cell: React.FC<CellProps> = ({
         paths.push(
           <polyline
             key="down-negative"
-            points="50%,100% 50%,50% 0,50%"
+            points="50 100 50 50 0 50"
             stroke="red"
             strokeWidth={laserThickness}
             fill="none"
@@ -137,7 +137,7 @@ export const Cell: React.FC<CellProps> = ({
         paths.push(
           <polyline
             key="left-positive"
-            points="0,50% 50%,50% 50%,100%"
+            points="0 50 50 50 50 0"
             stroke="red"
             strokeWidth={laserThickness}
             fill="none"
@@ -148,7 +148,7 @@ export const Cell: React.FC<CellProps> = ({
         paths.push(
           <polyline
             key="left-negative"
-            points="0,50% 50%,50% 50%,0"
+            points="0 50 50 50 50 100"
             stroke="red"
             strokeWidth={laserThickness}
             fill="none"
@@ -177,7 +177,7 @@ export const Cell: React.FC<CellProps> = ({
         paths.push(
           <polyline
             key="right-positive"
-            points="100%,50% 50%,50% 50%,0"
+            points="100 50 50 50 50 100"
             stroke="red"
             strokeWidth={laserThickness}
             fill="none"
@@ -188,7 +188,7 @@ export const Cell: React.FC<CellProps> = ({
         paths.push(
           <polyline
             key="right-negative"
-            points="100%,50% 50%,50% 50%,100%"
+            points="100 50 50 50 50 0"
             stroke="red"
             strokeWidth={laserThickness}
             fill="none"
@@ -209,6 +209,7 @@ export const Cell: React.FC<CellProps> = ({
       <svg
         width={svgSize}
         height={svgSize}
+        viewBox="0 0 100 100"
         className="absolute top-0 left-0"
       >
         {/* Mirror line */}
@@ -239,63 +240,143 @@ export const Cell: React.FC<CellProps> = ({
 
       {/* Dots outside the cell */}
       {edgeTop && (
-        <div className='-top-4 absolute w-2 h-2 bg-black rounded-full left-1/2 -translate-x-1/2 '
-        onClick={() => clickEdge(cell.row, cell.col, 'top')} />
+        <div className={`-top-4 absolute w-2 h-2 ${edgeTop.enabled ? 'bg-green-400' : 'bg-black'} rounded-full left-1/2 -translate-x-1/2 `}
+        onClick={(e) => {
+          e.stopPropagation();
+          clickEdge(cell.row, cell.col, 'top');
+        }} />
       )}
 
       {edgeBottom && (
-        <div className='-bottom-4 absolute w-2 h-2 bg-black rounded-full left-1/2 -translate-x-1/2 '
-        onClick={() => clickEdge(cell.row, cell.col, 'bottom')} />
+        <div className={`-bottom-4 absolute w-2 h-2 ${edgeBottom.enabled ? 'bg-green-400' : 'bg-black'} rounded-full left-1/2 -translate-x-1/2 `}
+        onClick={(e) => {
+          e.stopPropagation();
+          clickEdge(cell.row, cell.col, 'bottom');
+        }} />
       )}
 
       {edgeLeft && (
-        <div className='-left-4 absolute w-2 h-2 bg-black rounded-full top-1/2 -translate-y-1/2'
-        onClick={() => clickEdge(cell.row, cell.col, 'left')} />
+        <div className={`-left-4 absolute w-2 h-2 ${edgeLeft.enabled ? 'bg-green-400' : 'bg-black'} rounded-full top-1/2 -translate-y-1/2`}
+        onClick={(e) => {
+          e.stopPropagation();
+          clickEdge(cell.row, cell.col, 'left');
+        }} />
       )}
 
       {edgeRight && (
-        <div className='-right-4 absolute w-2 h-2 bg-black rounded-full top-1/2 -translate-y-1/2 '
-        onClick={() => clickEdge(cell.row, cell.col, 'right')} />
+        <div className={`-right-4 absolute w-2 h-2 ${edgeRight.enabled ? 'bg-green-400' : 'bg-black'} rounded-full top-1/2 -translate-y-1/2 `}
+        onClick={(e) => {
+          e.stopPropagation();
+          clickEdge(cell.row, cell.col, 'right');
+        }} />
       )}
 
       {/* Numbers outside the cell */}
-      {edgeTop?.startingNumber && (
+      {/* Top edge number */}
+      {(edgeTop?.startingNumber || edgeTop?.currentNumber) && (
         <div
-          className={`absolute -top-10 left-1/2 -translate-x-1/2 text-sm ${
-            edgeTop.currentNumber ? 'font-bold text-blue-500' : 'font-normal text-black'
-          }`}
+          className={`absolute pointer-events-none -top-10 left-1/2 -translate-x-1/2 text-sm`}
         >
-          <p>{edgeTop.startingNumber}</p>
+          {(() => {
+            // Case 1: Starting number only (black)
+            if (edgeTop.startingNumber && !edgeTop.currentNumber) {
+              return <p className="text-black">{edgeTop.startingNumber}</p>;
+            }
+            // Case 2: Current number only (blue)
+            else if (!edgeTop.startingNumber && edgeTop.currentNumber) {
+              return <p className="text-blue-500">{edgeTop.currentNumber}</p>;
+            }
+            // Case 3: Both numbers match (green)
+            else if (edgeTop.startingNumber && edgeTop.currentNumber && edgeTop.startingNumber === edgeTop.currentNumber) {
+              return <p className="text-green-500">{edgeTop.currentNumber}</p>;
+            }
+            // Case 4: Both numbers don't match (red with strikethrough)
+            else if (edgeTop.startingNumber && edgeTop.currentNumber && edgeTop.startingNumber !== edgeTop.currentNumber) {
+              return <p className="text-red-500 line-through">{edgeTop.currentNumber}</p>;
+            }
+            return null;
+          })()}
         </div>
       )}
 
-      {edgeBottom?.startingNumber && (
+      {/* Bottom edge number */}
+      {(edgeBottom?.startingNumber || edgeBottom?.currentNumber) && (
         <div
-          className={`absolute -bottom-10 left-1/2 -translate-x-1/2 text-sm ${
-            edgeBottom.currentNumber ? 'font-bold text-blue-500' : 'font-normal text-black'
-          }`}
+          className={`absolute pointer-events-none -bottom-10 left-1/2 -translate-x-1/2 text-sm`}
         >
-          {edgeBottom.startingNumber}
+          {(() => {
+            // Case 1: Starting number only (black)
+            if (edgeBottom.startingNumber && !edgeBottom.currentNumber) {
+              return <p className="text-black">{edgeBottom.startingNumber}</p>;
+            }
+            // Case 2: Current number only (blue)
+            else if (!edgeBottom.startingNumber && edgeBottom.currentNumber) {
+              return <p className="text-blue-500">{edgeBottom.currentNumber}</p>;
+            }
+            // Case 3: Both numbers match (green)
+            else if (edgeBottom.startingNumber && edgeBottom.currentNumber && edgeBottom.startingNumber === edgeBottom.currentNumber) {
+              return <p className="text-green-500">{edgeBottom.currentNumber}</p>;
+            }
+            // Case 4: Both numbers don't match (red with strikethrough)
+            else if (edgeBottom.startingNumber && edgeBottom.currentNumber && edgeBottom.startingNumber !== edgeBottom.currentNumber) {
+              return <p className="text-red-500 line-through">{edgeBottom.currentNumber}</p>;
+            }
+            return null;
+          })()}
         </div>
       )}
 
-      {edgeLeft?.startingNumber && (
+      {/* Left edge number */}
+      {(edgeLeft?.startingNumber || edgeLeft?.currentNumber) && (
         <div
-          className={`absolute -left-13 top-1/2 -translate-y-1/2 text-sm w-8 text-right ${
-            edgeLeft.currentNumber ? 'font-bold text-blue-500' : 'font-normal text-black'
-          }`}
+          className={`absolute pointer-events-none -left-13 top-1/2 -translate-y-1/2 text-sm w-8 text-right`}
         >
-          {edgeLeft.startingNumber}
+          {(() => {
+            // Case 1: Starting number only (black)
+            if (edgeLeft.startingNumber && !edgeLeft.currentNumber) {
+              return <p className="text-black">{edgeLeft.startingNumber}</p>;
+            }
+            // Case 2: Current number only (blue)
+            else if (!edgeLeft.startingNumber && edgeLeft.currentNumber) {
+              return <p className="text-blue-500">{edgeLeft.currentNumber}</p>;
+            }
+            // Case 3: Both numbers match (green)
+            else if (edgeLeft.startingNumber && edgeLeft.currentNumber && edgeLeft.startingNumber === edgeLeft.currentNumber) {
+              return <p className="text-green-500">{edgeLeft.currentNumber}</p>;
+            }
+            // Case 4: Both numbers don't match (red with strikethrough)
+            else if (edgeLeft.startingNumber && edgeLeft.currentNumber && edgeLeft.startingNumber !== edgeLeft.currentNumber) {
+              return <p className="text-red-500 line-through">{edgeLeft.currentNumber}</p>;
+            }
+            return null;
+          })()}
         </div>
       )}
 
-      {edgeRight?.startingNumber && (
+      {/* Right edge number */}
+      {(edgeRight?.startingNumber || edgeRight?.currentNumber) && (
         <div
-          className={`absolute -right-13 top-1/2 -translate-y-1/2 text-sm w-8 text-left ${
-            edgeRight.currentNumber ? 'font-bold text-blue-500' : 'font-normal text-black'
-          }`}
+          className={`absolute pointer-events-none -right-13 top-1/2 -translate-y-1/2 text-sm w-8 text-left`}
         >
-          {edgeRight.startingNumber}
+          {(() => {
+            // Case 1: Starting number only (black)
+            if (edgeRight.startingNumber && !edgeRight.currentNumber) {
+              return <p className="text-black">{edgeRight.startingNumber}</p>;
+            }
+            // Case 2: Current number only (blue)
+            else if (!edgeRight.startingNumber && edgeRight.currentNumber) {
+              return <p className="text-blue-500">{edgeRight.currentNumber}</p>;
+            }
+            // Case 3: Both numbers match (green)
+            else if (edgeRight.startingNumber && edgeRight.currentNumber && edgeRight.startingNumber === edgeRight.currentNumber) {
+              return <p className="text-green-500">{edgeRight.currentNumber}</p>;
+            }
+            // Case 4: Both numbers don't match (red with strikethrough)
+            else if (edgeRight.startingNumber && edgeRight.currentNumber && edgeRight.startingNumber !== edgeRight.currentNumber) {
+              return <p className="text-red-500 line-through">{edgeRight.currentNumber}</p>;
+            }
+            return null;
+          })()}
         </div>
       )}
     </div>
