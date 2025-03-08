@@ -203,6 +203,7 @@ export const Cell: React.FC<CellProps> = ({
   return (
     <div
       className={`relative cursor-pointer border border-black`}
+      style={{ width: `${size}px`, height: `${size}px` }}
       onClick={() => clickCell(cell.row, cell.col)}
     >
       {/* SVG for the laser paths and mirrors */}

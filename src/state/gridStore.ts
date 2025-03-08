@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { CellState } from '../types/types';
 
 function initializeGrid(): CellState[][] {
@@ -280,15 +281,21 @@ function retracePaths(newState: GridState): void {
 
 type GridState = {
     grid: CellState[][];
+    showInstructions: boolean;
 
     clickCell: (row: number, col: number) => void;
     clickEdge: (row: number, col: number, edge: 'top' | 'bottom' | 'left' | 'right') => void;
+
+    refreshGrid: () => void;
+    toggleInstructions: () => void;
 };
+export const useGridStore = create<GridState>()(
+  persist(
+    (set) => ({
+      grid: initializeGrid(),
+      showInstructions: false,
 
-export const useGridStore = create<GridState>((set) => ({
-    grid: initializeGrid(),
-
-    clickCell: (row, col) => {
+      clickCell: (row: number, col: number) => {
         set((state) => {
             // Mirrors cannot be placed in orthoganally adjacent cells.
             if (row > 0 && state.grid[row - 1][col].mirror) {
@@ -309,9 +316,9 @@ export const useGridStore = create<GridState>((set) => ({
             retracePaths(newState);
             return newState;
         });
-    },
+      },
 
-    clickEdge: (row, col, edge) => {
+      clickEdge: (row: number, col: number, edge: 'top' | 'bottom' | 'left' | 'right') => {
         set((state) => {
             const newState = { ...state };
             const edgeState = edge === 'top' ? newState.grid[row][col].edgeTop! : edge === 'bottom' ? newState.grid[row][col].edgeBottom! : edge === 'left' ? newState.grid[row][col].edgeLeft! : newState.grid[row][col].edgeRight!;
@@ -322,6 +329,25 @@ export const useGridStore = create<GridState>((set) => ({
             retracePaths(newState);
             return newState;
         });
-    }
+      },
 
-}));
+      refreshGrid: () => {
+        set(
+            {
+                grid: initializeGrid(),
+            }
+        );
+      },
+
+      toggleInstructions: () => {
+        set((state) => ({
+          showInstructions: !state.showInstructions
+        }));
+      }
+    }),
+    {
+      name: 'puzzle-grid-storage', // name of the item in localStorage
+      storage: createJSONStorage(() => localStorage)
+    }
+  )
+);

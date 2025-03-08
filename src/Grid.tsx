@@ -5,15 +5,15 @@ import Cell from './Cell';
 export const Grid: React.FC = () => {
   const { grid } = useGridStore();
   
-  // Fixed cell size
+  // Use fixed cell size - scaling will be handled by the container
   const cellSize = 60;
   
   // Calculate total grid dimensions
   const rows = grid.length;
   const cols = grid[0]?.length || 0;
   
-  // Add padding to account for objects that might render outside the cells
-  const padding = 30; // Space for numbers and dots outside cells
+  // Add padding for numbers and dots outside cells
+  const padding = 20;
   
   // Total outer width/height including padding
   const totalWidth = cols * cellSize + padding * 2;
@@ -22,10 +22,12 @@ export const Grid: React.FC = () => {
   return (
     <div className="relative" style={{ width: totalWidth, height: totalHeight }}>
       <div
-        className="absolute grid box-content top-[30px] left-[30px] border-2 border-black"
+        className="absolute grid box-content border-2 border-black"
         style={{
           gridTemplateColumns: `repeat(${cols}, ${cellSize}px)`,
           gridTemplateRows: `repeat(${rows}, ${cellSize}px)`,
+          top: `${padding}px`,
+          left: `${padding}px`
         }}
       >
         {grid.map((row, rowIndex) =>
