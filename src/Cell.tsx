@@ -17,6 +17,7 @@ export const Cell: React.FC<CellProps> = ({
     inputLeft,
     inputRight,
     mirror,
+    blocked,
     edgeTop,
     edgeBottom,
     edgeLeft,
@@ -211,6 +212,15 @@ export const Cell: React.FC<CellProps> = ({
         )}
         {mirror === 'negative' && (
           <line x1="0" y1="0" x2="100%" y2="100%" stroke="red" strokeWidth={mirrorThickness} />
+        )}
+
+        {/* X mark in the corner when cell is blocked */}
+        {blocked && (
+          <g className="text-red-500" stroke="red" strokeWidth={2}>
+            {/* Small X in the top-right corner */}
+            <line x1="75" y1="15" x2="90" y2="30" />
+            <line x1="90" y1="15" x2="75" y2="30" />
+          </g>
         )}
 
         {/* Laser paths */}

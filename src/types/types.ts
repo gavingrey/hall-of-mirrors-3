@@ -11,6 +11,7 @@ export type CellState = {
   inputRight: boolean;
 
   mirror?: 'positive' | 'negative';
+  blocked?: boolean; // Indicates if a mirror cannot go in this cell (X state)
 
   row: number;
   col: number;

@@ -310,26 +310,37 @@ export const useGridStore = create<GridState>()(
 
       clickCell: (row: number, col: number) => {
         set(state => {
-          // Mirrors cannot be placed in orthoganally adjacent cells.
-          if (row > 0 && state.grid[row - 1][col].mirror) {
-            return state;
-          }
-          if (row < 9 && state.grid[row + 1][col].mirror) {
-            return state;
-          }
-          if (col > 0 && state.grid[row][col - 1].mirror) {
-            return state;
-          }
-          if (col < 9 && state.grid[row][col + 1].mirror) {
-            return state;
-          }
           const newState = { ...state };
-          const existingMirror = newState.grid[row][col].mirror;
-          newState.grid[row][col].mirror = !existingMirror
-            ? 'positive'
-            : existingMirror === 'positive'
-              ? 'negative'
-              : undefined;
+          const cell = newState.grid[row][col];
+          const existingMirror = cell.mirror;
+
+          // Mirrors cannot be placed in orthoganally adjacent cells.
+          if (
+            (row > 0 && state.grid[row - 1][col].mirror) ||
+            (row < 9 && state.grid[row + 1][col].mirror) ||
+            (col > 0 && state.grid[row][col - 1].mirror) ||
+            (col < 9 && state.grid[row][col + 1].mirror)
+          ) {
+            newState.grid[row][col].blocked = !newState.grid[row][col].blocked;
+            return newState;
+          }
+
+          // Handle state transitions
+          if (cell.blocked) {
+            // If cell is blocked (has X), remove the X
+            cell.blocked = false;
+          } else if (existingMirror === 'negative') {
+            // If negative mirror, remove mirror and add X
+            cell.mirror = undefined;
+            cell.blocked = true;
+          } else if (existingMirror === 'positive') {
+            // If positive mirror, flip to negative
+            cell.mirror = 'negative';
+          } else {
+            // If empty, add positive mirror
+            cell.mirror = 'positive';
+          }
+
           retracePaths(newState);
           return newState;
         });

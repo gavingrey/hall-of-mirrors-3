@@ -121,8 +121,7 @@ function App() {
               <h3 className="font-bold">How to Play:</h3>
               <ul className="list-disc pl-5 space-y-1">
                 <li>
-                  Click on a cell to place a mirror. Click again to change its orientation, and a
-                  third time to remove it.
+                  Click on a cell to place a mirror. Click again to change its orientation. Clicking a third time adds a marker to indicate that no mirror can be placed. And a fourth time clears the cell.
                 </li>
                 <li>Click on the edges to enable or disable light beams.</li>
                 <li>A green circle indicates that a light beam is enabled.</li>
